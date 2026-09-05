@@ -16,7 +16,6 @@ export default function Home() {
   const [selectedAsset, setSelectedAsset] = useState(null);
   const [walletOpen, setWalletOpen] = useState(false);
   const [walletAddress, setWalletAddress] = useState(null);
-  const sectionRefs = useRef({});
 
   useEffect(() => {
     const observer = new IntersectionObserver(
