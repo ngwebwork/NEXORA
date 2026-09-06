@@ -1,42 +1,59 @@
 import { Suspense, useEffect, useMemo, useRef } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { MeshDistortMaterial, Sparkles, Float } from '@react-three/drei';
 import * as THREE from 'three';
 
 function EnergyCore({ scrollProgress }) {
   const meshRef = useRef();
+  const wireRef = useRef();
   const groupRef = useRef();
 
   useFrame((state, delta) => {
     const { pointer } = state;
     if (meshRef.current) {
-      meshRef.current.rotation.y += delta * 0.18;
-      meshRef.current.rotation.x += delta * 0.05;
+      meshRef.current.rotation.y += delta * 0.16;
+      meshRef.current.rotation.x += delta * 0.04;
+    }
+    if (wireRef.current) {
+      wireRef.current.rotation.y -= delta * 0.08;
     }
     if (groupRef.current) {
-      const targetX = pointer.y * 0.3;
-      const targetY = pointer.x * 0.4;
+      const targetX = pointer.y * 0.25;
+      const targetY = pointer.x * 0.35;
       groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, targetX, 0.04);
       groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, targetY, 0.04);
-      groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, -scrollProgress.current * 1.6, 0.06);
+      groupRef.current.position.y = THREE.MathUtils.lerp(
+        groupRef.current.position.y,
+        -scrollProgress.current * 1.4,
+        0.06
+      );
     }
   });
 
   return (
-    <group ref={groupRef}>
-      <Float speed={1.4} rotationIntensity={0.3} floatIntensity={0.8}>
-        <mesh ref={meshRef} scale={1.7}>
+    <group ref={groupRef} position={[1.7, 0, 0]}>
+      <Float speed={1.4} rotationIntensity={0.25} floatIntensity={0.7}>
+        <mesh ref={meshRef} scale={1.05}>
           <icosahedronGeometry args={[1, 4]} />
           <MeshDistortMaterial
             color="#4ce0d2"
-            emissive="#0d3d38"
-            roughness={0.15}
-            metalness={0.6}
-            distort={0.35}
-            speed={1.6}
+            emissive="#0c3733"
+            emissiveIntensity={0.6}
+            roughness={0.2}
+            metalness={0.25}
+            distort={0.32}
+            speed={1.4}
             transparent
-            opacity={0.92}
+            opacity={0.55}
           />
+        </mesh>
+        <mesh ref={wireRef} scale={1.32}>
+          <icosahedronGeometry args={[1, 1]} />
+          <meshBasicMaterial color="#7c5cfc" wireframe transparent opacity={0.25} />
+        </mesh>
+        <mesh scale={0.32}>
+          <sphereGeometry args={[1, 16, 16]} />
+          <meshBasicMaterial color="#eafffb" transparent opacity={0.9} />
         </mesh>
       </Float>
     </group>
@@ -49,10 +66,10 @@ function OrbitRing({ radius, tilt, speed, color, thickness = 0.01 }) {
     if (ref.current) ref.current.rotation.z += delta * speed;
   });
   return (
-    <group rotation={[tilt, 0, 0]}>
+    <group position={[1.7, 0, 0]} rotation={[tilt, 0, 0]}>
       <mesh ref={ref}>
         <torusGeometry args={[radius, thickness, 16, 128]} />
-        <meshBasicMaterial color={color} transparent opacity={0.35} />
+        <meshBasicMaterial color={color} transparent opacity={0.3} />
       </mesh>
     </group>
   );
@@ -61,17 +78,25 @@ function OrbitRing({ radius, tilt, speed, color, thickness = 0.01 }) {
 function SceneContents({ quality, scrollProgress }) {
   return (
     <>
-      <ambientLight intensity={0.4} />
-      <pointLight position={[4, 3, 4]} intensity={40} color="#4ce0d2" />
-      <pointLight position={[-4, -2, -3]} intensity={25} color="#7c5cfc" />
+      <ambientLight intensity={0.5} />
+      <pointLight position={[4, 3, 4]} intensity={30} color="#4ce0d2" />
+      <pointLight position={[-2, -2, 2]} intensity={18} color="#7c5cfc" />
 
       <EnergyCore scrollProgress={scrollProgress} />
 
-      <OrbitRing radius={2.4} tilt={0.6} speed={0.12} color="#4ce0d2" />
-      <OrbitRing radius={2.9} tilt={-0.35} speed={-0.08} color="#7c5cfc" thickness={0.006} />
+      <OrbitRing radius={1.65} tilt={0.6} speed={0.12} color="#4ce0d2" />
+      <OrbitRing radius={2.0} tilt={-0.35} speed={-0.08} color="#7c5cfc" thickness={0.006} />
 
       {quality !== 'low' && (
-        <Sparkles count={quality === 'high' ? 220 : 120} scale={7} size={2} speed={0.25} color="#4ce0d2" opacity={0.6} />
+        <Sparkles
+          count={quality === 'high' ? 180 : 100}
+          scale={[6, 5, 4]}
+          position={[1.7, 0, 0]}
+          size={2}
+          speed={0.25}
+          color="#4ce0d2"
+          opacity={0.6}
+        />
       )}
     </>
   );
@@ -87,10 +112,10 @@ export default function HeroScene({ quality = 'high' }) {
   }
 
   return (
-    <div className="absolute inset-0" onWheelCapture={() => {}}>
+    <div className="absolute inset-0">
       <Canvas
         dpr={dpr}
-        camera={{ position: [0, 0, 6], fov: 45 }}
+        camera={{ position: [0, 0, 7], fov: 40 }}
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
       >
         <Suspense fallback={null}>
