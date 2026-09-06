@@ -31,7 +31,7 @@ function EnergyCore({ scrollProgress }) {
   });
 
   return (
-    <group ref={groupRef} position={[1.7, 0, 0]}>
+    <group ref={groupRef} position={[2.1, 0, 0]}>
       <Float speed={1.4} rotationIntensity={0.25} floatIntensity={0.7}>
         <mesh ref={meshRef} scale={1.05}>
           <icosahedronGeometry args={[1, 4]} />
@@ -66,7 +66,7 @@ function OrbitRing({ radius, tilt, speed, color, thickness = 0.01 }) {
     if (ref.current) ref.current.rotation.z += delta * speed;
   });
   return (
-    <group position={[1.7, 0, 0]} rotation={[tilt, 0, 0]}>
+    <group position={[2.1, 0, 0]} rotation={[tilt, 0, 0]}>
       <mesh ref={ref}>
         <torusGeometry args={[radius, thickness, 16, 128]} />
         <meshBasicMaterial color={color} transparent opacity={0.3} />
@@ -91,7 +91,7 @@ function SceneContents({ quality, scrollProgress }) {
         <Sparkles
           count={quality === 'high' ? 180 : 100}
           scale={[6, 5, 4]}
-          position={[1.7, 0, 0]}
+          position={[2.1, 0, 0]}
           size={2}
           speed={0.25}
           color="#4ce0d2"
@@ -116,7 +116,7 @@ export default function HeroScene({ quality = 'high' }) {
       <Canvas
         dpr={dpr}
         camera={{ position: [0, 0, 7], fov: 40 }}
-        gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+        gl={{ antialias: true, alpha: true, powerPreference: 'high-performance', preserveDrawingBuffer: true }}
       >
         <Suspense fallback={null}>
           <SceneContents quality={quality} scrollProgress={scrollProgress} />

@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { TrendingDown, TrendingUp } from 'lucide-react';
 
-function Sparkline({ data, color, positive }) {
+function Sparkline({ data, positive }) {
   const width = 100;
   const height = 32;
   const min = Math.min(...data);
