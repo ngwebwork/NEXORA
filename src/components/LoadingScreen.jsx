@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import Logo from './Logo.jsx';
 
 const STAGES = ['Initializing Network...', 'Loading 3D Environment...', 'Connecting to Web3...'];
 
@@ -38,7 +39,7 @@ export default function LoadingScreen({ onComplete }) {
             transition={{ duration: 0.6, ease: 'easeOut' }}
             className="relative flex flex-col items-center gap-6"
           >
-            <div className="relative h-20 w-20">
+            <div className="relative flex h-20 w-20 items-center justify-center">
               <div className="absolute inset-0 rounded-full border border-cyan/30" />
               <motion.div
                 className="absolute inset-0 rounded-full border-t-2 border-cyan"
@@ -46,7 +47,7 @@ export default function LoadingScreen({ onComplete }) {
                 transition={{ duration: 1.4, repeat: Infinity, ease: 'linear' }}
               />
               <div className="absolute inset-3 rounded-full bg-cyan/10 blur-md" />
-              <div className="absolute inset-[30%] rounded-full bg-cyan shadow-glow" />
+              <Logo size={40} />
             </div>
 
             <h1 className="font-display text-3xl tracking-[0.35em] text-white">NEXORA</h1>
