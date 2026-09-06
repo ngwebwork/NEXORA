@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ecosystemStats } from '../data/portfolioData.js';
+import { useIsTouchDevice } from '../hooks/useIsTouchDevice.js';
 
 const EcosystemScene = lazy(() => import('./EcosystemScene.jsx'));
 
@@ -22,6 +23,7 @@ function useQuality() {
 
 export default function Ecosystem({ id }) {
   const quality = useQuality();
+  const isTouch = useIsTouchDevice();
 
   return (
     <section id={id} className="relative overflow-hidden py-28">
@@ -59,7 +61,7 @@ export default function Ecosystem({ id }) {
 
         <div className="relative h-[420px] w-full sm:h-[500px]">
           <Suspense fallback={null}>
-            <EcosystemScene quality={quality} />
+            <EcosystemScene quality={quality} reduceMotion={isTouch} />
           </Suspense>
         </div>
       </div>

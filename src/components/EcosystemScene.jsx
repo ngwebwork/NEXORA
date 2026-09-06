@@ -83,14 +83,14 @@ function Edges({ edges }) {
   );
 }
 
-function NetworkGroup() {
+function NetworkGroup({ motionScale }) {
   const { nodes, edges } = useNetwork(26, 2.6);
   const ref = useRef();
 
   useFrame((state, delta) => {
     if (!ref.current) return;
-    ref.current.rotation.y += delta * 0.06 + state.pointer.x * 0.002;
-    const targetX = state.pointer.y * 0.2;
+    ref.current.rotation.y += delta * 0.06 + state.pointer.x * 0.002 * motionScale;
+    const targetX = state.pointer.y * 0.2 * motionScale;
     ref.current.rotation.x = THREE.MathUtils.lerp(ref.current.rotation.x, targetX, 0.03);
   });
 
@@ -102,7 +102,20 @@ function NetworkGroup() {
   );
 }
 
-export default function EcosystemScene({ quality = 'high' }) {
+function CursorLight({ motionScale }) {
+  const ref = useRef();
+  useFrame((state) => {
+    if (!ref.current) return;
+    const { pointer } = state;
+    ref.current.position.x = THREE.MathUtils.lerp(ref.current.position.x, pointer.x * 3 * motionScale, 0.05);
+    ref.current.position.y = THREE.MathUtils.lerp(ref.current.position.y, pointer.y * 2 * motionScale, 0.05);
+  });
+  return <pointLight ref={ref} position={[3, 2, 4]} intensity={20} color="#7c5cfc" />;
+}
+
+export default function EcosystemScene({ quality = 'high', reduceMotion = false }) {
+  const motionScale = reduceMotion ? 0.35 : 1;
+
   return (
     <div className="absolute inset-0">
       <Canvas
@@ -112,8 +125,8 @@ export default function EcosystemScene({ quality = 'high' }) {
       >
         <Suspense fallback={null}>
           <ambientLight intensity={0.5} />
-          <pointLight position={[3, 2, 4]} intensity={20} color="#7c5cfc" />
-          <NetworkGroup />
+          <CursorLight motionScale={motionScale} />
+          <NetworkGroup motionScale={motionScale} />
           {quality !== 'low' && (
             <Sparkles count={quality === 'high' ? 150 : 80} scale={6} size={1.5} speed={0.2} color="#7c5cfc" opacity={0.5} />
           )}

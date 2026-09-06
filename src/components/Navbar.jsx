@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Search, Menu, X, Wallet } from 'lucide-react';
+import { useMagnetic } from '../hooks/useMagnetic.js';
 
 const LINKS = ['Home', 'Markets', 'Ecosystem', 'Analytics', 'About'];
 
 export default function Navbar({ activeSection, onNavigate, onConnectWallet, walletAddress }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const walletBtnRef = useMagnetic({ strength: 0.3, maxOffset: 6, radius: 70 });
 
   useEffect(() => {
     function handleScroll() {
@@ -67,8 +69,9 @@ export default function Navbar({ activeSection, onNavigate, onConnectWallet, wal
             <Search size={16} />
           </button>
           <button
+            ref={walletBtnRef}
             onClick={onConnectWallet}
-            className="group relative flex items-center gap-2 overflow-hidden rounded-full border border-cyan/30 bg-cyan/10 px-5 py-2.5 text-sm font-semibold text-cyan transition-all hover:bg-cyan/20 hover:shadow-glow"
+            className="group relative flex items-center gap-2 overflow-hidden rounded-full border border-cyan/30 bg-cyan/10 px-5 py-2.5 text-sm font-semibold text-cyan transition-colors hover:bg-cyan/20 hover:shadow-glow"
           >
             <Wallet size={15} />
             {walletAddress ? walletAddress : 'Connect Wallet'}

@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { TrendingDown, TrendingUp } from 'lucide-react';
+import { useTilt } from '../hooks/useTilt.js';
 
 function Sparkline({ data, positive }) {
   const width = 100;
@@ -33,14 +34,20 @@ function Sparkline({ data, positive }) {
 
 export default function CryptoCard({ asset, onSelect }) {
   const positive = asset.change24h >= 0;
+  const tilt = useTilt({ max: 3, glow: 'rgba(76,224,210,0.1)', radius: 260 });
 
   return (
-    <motion.button
-      layout
-      onClick={() => onSelect(asset)}
-      whileHover={{ y: -4 }}
-      className="card-glow group relative flex w-full items-center justify-between gap-4 rounded-2xl border border-white/8 bg-surface/60 px-5 py-4 text-left transition-colors hover:border-white/15"
-    >
+    <div style={{ perspective: 900 }}>
+      <motion.button
+        layout
+        ref={tilt.ref}
+        onMouseMove={tilt.onMouseMove}
+        onMouseLeave={tilt.onMouseLeave}
+        onClick={() => onSelect(asset)}
+        whileHover={{ y: -4 }}
+        style={tilt.style}
+        className="card-glow group relative flex w-full items-center justify-between gap-4 rounded-2xl border border-white/8 bg-surface/60 px-5 py-4 text-left transition-colors hover:border-white/15"
+      >
       <div className="flex min-w-0 items-center gap-3">
         <div
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-lg font-semibold"
@@ -78,6 +85,7 @@ export default function CryptoCard({ asset, onSelect }) {
           {Math.abs(asset.change24h).toFixed(2)}%
         </p>
       </div>
-    </motion.button>
+      </motion.button>
+    </div>
   );
 }

@@ -1,7 +1,7 @@
-import { useRef } from 'react';
-import { motion, useMotionTemplate, useMotionValue, useSpring } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Globe2, Lock, Sparkles, Waypoints } from 'lucide-react';
 import { SectionHeading } from './MarketSection.jsx';
+import { useTilt } from '../hooks/useTilt.js';
 
 const FEATURES = [
   {
@@ -27,28 +27,7 @@ const FEATURES = [
 ];
 
 function FeatureCard({ feature, index }) {
-  const ref = useRef(null);
-  const rotateX = useSpring(0, { stiffness: 200, damping: 20 });
-  const rotateY = useSpring(0, { stiffness: 200, damping: 20 });
-  const glowX = useMotionValue(50);
-  const glowY = useMotionValue(50);
-  const background = useMotionTemplate`radial-gradient(240px circle at ${glowX}% ${glowY}%, rgba(76,224,210,0.12), transparent 70%)`;
-
-  function handleMouseMove(e) {
-    const rect = ref.current.getBoundingClientRect();
-    const px = (e.clientX - rect.left) / rect.width;
-    const py = (e.clientY - rect.top) / rect.height;
-    rotateY.set((px - 0.5) * 14);
-    rotateX.set((0.5 - py) * 14);
-    glowX.set(px * 100);
-    glowY.set(py * 100);
-  }
-
-  function handleMouseLeave() {
-    rotateX.set(0);
-    rotateY.set(0);
-  }
-
+  const tilt = useTilt({ max: 7, glow: 'rgba(76,224,210,0.12)', radius: 240 });
   const Icon = feature.icon;
 
   return (
@@ -60,10 +39,10 @@ function FeatureCard({ feature, index }) {
       style={{ perspective: 800 }}
     >
       <motion.div
-        ref={ref}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        style={{ rotateX, rotateY, background }}
+        ref={tilt.ref}
+        onMouseMove={tilt.onMouseMove}
+        onMouseLeave={tilt.onMouseLeave}
+        style={tilt.style}
         className="card-glow group relative overflow-hidden rounded-3xl border border-white/8 bg-surface/60 p-8"
       >
         <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan/20 bg-cyan/10 text-cyan transition-transform duration-300 group-hover:scale-110">

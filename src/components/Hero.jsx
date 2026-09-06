@@ -2,6 +2,9 @@ import { lazy, Suspense, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Compass } from 'lucide-react';
 import { heroStats } from '../data/cryptoData.js';
+import { useMagnetic } from '../hooks/useMagnetic.js';
+import { useParallaxLayer } from '../hooks/useParallaxLayer.js';
+import { useIsTouchDevice } from '../hooks/useIsTouchDevice.js';
 
 const HeroScene = lazy(() => import('./HeroScene.jsx'));
 
@@ -21,16 +24,45 @@ function useQuality() {
   return quality;
 }
 
+const STAT_DEPTHS = [14, 24, 34];
+
+function FloatingStat({ stat, depth, position, delay }) {
+  const parallaxRef = useParallaxLayer({ depth });
+
+  return (
+    <div ref={parallaxRef} className={`absolute ${position}`}>
+      <motion.div
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.6, delay: 0.5 + delay * 0.15 }}
+        className="animate-float glass rounded-2xl px-4 py-3"
+        style={{ animationDelay: `${delay * 0.6}s` }}
+      >
+        <p className="font-mono-tabular text-xs text-white/50">{stat.symbol}</p>
+        <p className="font-mono-tabular text-lg font-semibold text-white">{stat.price}</p>
+        <p className="font-mono-tabular text-xs font-medium text-emerald-400">{stat.change}</p>
+      </motion.div>
+    </div>
+  );
+}
+
 export default function Hero({ id, onExploreMarkets, onLaunchApp }) {
   const quality = useQuality();
+  const isTouch = useIsTouchDevice();
+  const gridRef = useParallaxLayer({ depth: 6, smoothing: 0.05 });
+  const exploreRef = useMagnetic({ strength: 0.35, maxOffset: 8, radius: 90 });
+  const launchRef = useMagnetic({ strength: 0.35, maxOffset: 8, radius: 90 });
 
   return (
     <section id={id} className="relative flex min-h-[100svh] items-center overflow-hidden pt-24">
-      <div className="absolute inset-0 bg-grid-pattern bg-grid opacity-[0.15] [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]" />
+      <div
+        ref={gridRef}
+        className="absolute inset-0 bg-grid-pattern bg-grid opacity-[0.15] [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]"
+      />
       <div className="absolute inset-0 bg-radial-fade" />
 
       <Suspense fallback={null}>
-        <HeroScene quality={quality} />
+        <HeroScene quality={quality} reduceMotion={isTouch} />
       </Suspense>
 
       <div className="pointer-events-none relative z-10 mx-auto w-full max-w-7xl px-6 lg:px-10">
@@ -76,15 +108,17 @@ export default function Hero({ id, onExploreMarkets, onLaunchApp }) {
             className="pointer-events-auto mt-10 flex flex-wrap items-center gap-4"
           >
             <button
+              ref={exploreRef}
               onClick={onExploreMarkets}
-              className="group flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-6 py-3.5 text-sm font-semibold text-white transition-all hover:border-white/30 hover:bg-white/10"
+              className="group flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:border-white/30 hover:bg-white/10"
             >
               <Compass size={16} />
               Explore Markets
             </button>
             <button
+              ref={launchRef}
               onClick={onLaunchApp}
-              className="group relative flex items-center gap-2 overflow-hidden rounded-full bg-cyan px-6 py-3.5 text-sm font-semibold text-void shadow-glow transition-transform hover:scale-[1.03]"
+              className="group relative flex items-center gap-2 overflow-hidden rounded-full bg-cyan px-6 py-3.5 text-sm font-semibold text-void shadow-glow"
             >
               Launch App
               <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
@@ -95,18 +129,7 @@ export default function Hero({ id, onExploreMarkets, onLaunchApp }) {
 
       <div className="pointer-events-none absolute inset-0 z-10 hidden lg:block">
         {heroStats.map((stat, i) => (
-          <motion.div
-            key={stat.symbol}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 + i * 0.15 }}
-            className={`absolute animate-float glass rounded-2xl px-4 py-3 ${positions[i]}`}
-            style={{ animationDelay: `${i * 0.6}s` }}
-          >
-            <p className="font-mono-tabular text-xs text-white/50">{stat.symbol}</p>
-            <p className="font-mono-tabular text-lg font-semibold text-white">{stat.price}</p>
-            <p className="font-mono-tabular text-xs font-medium text-emerald-400">{stat.change}</p>
-          </motion.div>
+          <FloatingStat key={stat.symbol} stat={stat} depth={STAT_DEPTHS[i]} position={positions[i]} delay={i} />
         ))}
       </div>
 

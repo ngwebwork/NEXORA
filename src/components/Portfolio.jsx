@@ -4,12 +4,15 @@ import { TrendingUp } from 'lucide-react';
 import { assetAllocation, portfolioRanges, portfolioSummary } from '../data/portfolioData.js';
 import PortfolioChart from './PortfolioChart.jsx';
 import { SectionHeading } from './MarketSection.jsx';
+import { useSpotlight } from '../hooks/useSpotlight.js';
 
 const RANGES = ['24H', '7D', '1M', '1Y'];
 
 export default function Portfolio({ id }) {
   const [range, setRange] = useState('24H');
   const activeRange = portfolioRanges[range];
+  const balanceSpotlight = useSpotlight();
+  const allocationSpotlight = useSpotlight();
 
   return (
     <section id={id} className="relative mx-auto max-w-7xl px-6 py-28 lg:px-10">
@@ -21,11 +24,13 @@ export default function Portfolio({ id }) {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <motion.div
+          ref={balanceSpotlight.ref}
+          onMouseMove={balanceSpotlight.onMouseMove}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.6 }}
-          className="glass card-glow relative col-span-1 rounded-3xl p-6 lg:col-span-2"
+          className="glass card-glow spotlight relative col-span-1 rounded-3xl p-6 lg:col-span-2"
         >
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
@@ -64,11 +69,13 @@ export default function Portfolio({ id }) {
         </motion.div>
 
         <motion.div
+          ref={allocationSpotlight.ref}
+          onMouseMove={allocationSpotlight.onMouseMove}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="glass card-glow rounded-3xl p-6"
+          className="glass card-glow spotlight rounded-3xl p-6"
         >
           <p className="mb-6 text-xs uppercase tracking-[0.2em] text-white/40">Asset Allocation</p>
 
