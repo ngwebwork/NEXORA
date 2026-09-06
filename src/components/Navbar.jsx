@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Search, Menu, X, Wallet } from 'lucide-react';
 import { useMagnetic } from '../hooks/useMagnetic.js';
+import Logo from './Logo.jsx';
 
 const LINKS = ['Home', 'Markets', 'Ecosystem', 'Analytics', 'About'];
 
@@ -33,9 +34,13 @@ export default function Navbar({ activeSection, onNavigate, onConnectWallet, wal
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-10">
         <button
           onClick={() => handleNav('home')}
-          className="font-display text-xl font-semibold tracking-[0.2em] text-white"
+          className="group flex items-center gap-2.5"
+          aria-label="NEXORA home"
         >
-          NEX<span className="text-cyan">ORA</span>
+          <Logo size={34} className="group-hover:scale-105 group-hover:rotate-3" />
+          <span className="font-display text-xl font-semibold tracking-[0.2em] text-white">
+            NEX<span className="text-cyan">ORA</span>
+          </span>
         </button>
 
         <ul className="hidden items-center gap-1 lg:flex">

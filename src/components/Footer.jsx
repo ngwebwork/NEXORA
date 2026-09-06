@@ -1,3 +1,5 @@
+import Logo from './Logo.jsx';
+
 const LINK_GROUPS = [
   {
     title: 'Platform',
@@ -50,9 +52,12 @@ export default function Footer() {
       <div className="mx-auto max-w-7xl px-6 py-16 lg:px-10">
         <div className="flex flex-col justify-between gap-10 sm:flex-row">
           <div className="max-w-xs">
-            <p className="font-display text-xl font-semibold tracking-[0.2em] text-white">
-              NEX<span className="text-cyan">ORA</span>
-            </p>
+            <div className="flex items-center gap-2.5">
+              <Logo size={30} />
+              <p className="font-display text-xl font-semibold tracking-[0.2em] text-white">
+                NEX<span className="text-cyan">ORA</span>
+              </p>
+            </div>
             <p className="mt-3 text-sm text-white/40">The Future of Digital Assets.</p>
 
             <div className="mt-6 flex gap-3">
